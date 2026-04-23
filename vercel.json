@@ -1,0 +1,12 @@
+{
+  "build": {
+    "command": "echo 'Building static site...'",
+    "outputDirectory": "."
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}

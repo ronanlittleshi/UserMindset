@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抖小保 - 平台保障助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 手机模拟器容器 */
+        .phone-container {
+            width: 480px;
+            height: 1024px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 广告底图 */
+        .ad-background {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ad-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        /* 视频播放/暂停提示（半透明） */
+        .video-overlay-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        /* 抖小保头像容器 */
+        .avatar-placeholder {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+        }
+        
+        /* 转化记录内容样式 */
+        .convert-record-list {
+            padding: 20px;
+        }
+        
+        .record-item {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .record-item:hover {
+            background: #f0f0f0;
+            transform: translateX(3px);
+        }
+        
+        .record-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        
+        .record-time {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        
+        .record-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .record-status.success {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+        
+        .record-status.pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+        
+        /* 客服内容样式 */
+        .customer-service-content-inner {
+            padding: 20px;
+        }
+        
+        .service-option {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .service-option:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+        
+        .service-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .service-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* 抖小保浮窗 - 移到左边 */
+        .dou-xiao-bao {
+            position: absolute;
+            left: 20px;
+            top: 180px;
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: transform 0.2s, opacity 0.3s;
+            opacity: 1;
+        }
+        
+        .dou-xiao-bao.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dou-xiao-bao:hover {
+            transform: scale(1.1);
+        }
+
+        .dou-xiao-bao.wave {
+            animation: wave 0.6s ease-in-out;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+
+        .dou-xiao-bao-img {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .dou-xiao-bao-label {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            font-size: 13px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        /* 提醒气泡 */
+        .reminder-bubble {
+            position: absolute;
+            left: 100px;
+            top: 175px;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            font-size: 14px;
+            color: #333;
+            z-index: 99;
+            display: none;
+            animation: bubbleIn 0.4s ease;
+            max-width: 180px;
+        }
+
+        .reminder-bubble.show {
+            display: block;
+        }
+
+        .reminder-bubble::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 8px solid transparent;
+            border-right-color: white;
+        }
+
+        @keyframes bubbleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 猜你想问面板 */
+        .guess-panel {
+            position: absolute;
+            left: 100px;
+            top: 230px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+            width: 280px;
+            display: none;
+            z-index: 98;
+        }
+
+        .guess-panel.show {
+            display: block;
+            animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        .guess-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .guess-header-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .guess-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f8f8f8;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #333;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .guess-item:hover {
+            background: #fafafa;
+            padding-left: 25px;
+        }
+
+        .guess-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 18px 18px;
+        }
+
+        .guess-item-number {
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        /* 对话界面 */
+        .chat-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            display: none;
+            z-index: 200;
+        }
+
+        .chat-screen.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .chat-header {
+            height: 100px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(238, 90, 36, 0.3);
+        }
+
+        .chat-back {
+            font-size: 28px;
+            cursor: pointer;
+            margin-right: 15px;
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .chat-back:hover {
+            transform: translateX(-3px);
+        }
+
+        .chat-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .chat-container {
+            height: calc(100% - 100px - 80px);
+            overflow-y: auto;
+            padding: 25px 20px;
+        }
+
+        .message {
+            margin-bottom: 25px;
+            display: flex;
+            animation: messageIn 0.4s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.ai {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-right: 12px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(238, 90, 36, 0.3);
+        }
+
+        .message.ai .message-avatar {
+            background: white;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        }
+
+        .message.ai .message-avatar img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .message.user .message-avatar {
+            order: 2;
+            margin-right: 0;
+            margin-left: 12px;
+            background: #ddd;
+            box-shadow: none;
+        }
+
+        .message-content {
+            max-width: 280px;
+            background: white;
+            padding: 15px 18px;
+            border-radius: 18px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            font-size: 15px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            box-shadow: 0 3px 15px rgba(238, 90, 36, 0.3);
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* 打字输入框 */
+        .chat-input {
+            height: 80px;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .input-box {
+            flex: 1;
+            height: 48px;
+            background: #f5f5f5;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-right: 15px;
+            cursor: text;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            outline: none;
+            color: #333;
+        }
+
+        .input-field::placeholder {
+            color: #999;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .chat-action-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-action-icon {
+            font-size: 22px;
+        }
+
+        .chat-action-text {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .send-btn:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+        }
+
+        /* 热线弹窗 */
+        .hotline-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .hotline-modal.show {
+            display: flex;
+        }
+
+        .hotline-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .hotline-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .hotline-modal-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ee5a24;
+            margin-bottom: 25px;
+        }
+
+        .hotline-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hotline-modal-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .hotline-modal-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .hotline-modal-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .hotline-modal-btn.confirm {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        /* 打字中提示 */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 15px 18px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            max-width: 280px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+
+        /* 跳转按钮 */
+        .jump-button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 15px;
+        }
+
+        .jump-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* 转化记录页面 */
+        .convert-record-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: none;
+            z-index: 300;
+        }
+
+        .convert-record-page.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .convert-record-header {
+            height: 100px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(238, 90, 36, 0.3);
+        }
+
+        .convert-record-back {
+            font-size: 28px;
+            cursor: pointer;
+            margin-right: 15px;
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .convert-record-back:hover {
+            transform: translateX(-3px);
+        }
+
+        .convert-record-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .convert-record-content {
+            height: calc(100% - 100px);
+            background-image: url('转化记录列表页.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* 客服页面 */
+        .customer-service-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: none;
+            z-index: 400;
+        }
+
+        .customer-service-page.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .customer-service-header {
+            height: 100px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(238, 90, 36, 0.3);
+        }
+
+        .customer-service-back {
+            font-size: 28px;
+            cursor: pointer;
+            margin-right: 15px;
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .customer-service-back:hover {
+            transform: translateX(-3px);
+        }
+
+        .customer-service-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .customer-service-content {
+            height: calc(100% - 100px);
+            background-image: url('客服页面.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    
+
+    
+    <div class="phone-container">
+        <!-- 广告底图 - 动态视频 -->
+        <div class="ad-background" id="adBackground" onclick="toggleVideoPlay(event)">
+            <video class="ad-video" id="adVideo" autoplay muted loop playsinline>
+                <source src="Feed刷广告.mp4" type="video/mp4">
+            </video>
+            <!-- 视频播放/暂停提示 -->
+            <div class="video-overlay-hint" id="videoOverlayHint">点击暂停/播放</div>
+        </div>
+        
+        <!-- 抖小保浮窗 - 左边 -->
+        <div class="dou-xiao-bao" id="douXiaoBao" onclick="toggleGuessPanel()">
+            <img src="抖小保.png" class="dou-xiao-bao-img" alt="抖小保">
+            <span class="dou-xiao-bao-label">抖小保</span>
+        </div>
+        
+        <!-- 提醒气泡 -->
+        <div class="reminder-bubble" id="reminderBubble">
+            👋 嗨！有问题随时找我哦~
+        </div>
+        
+        <!-- 猜你想问面板 -->
+        <div class="guess-panel" id="guessPanel">
+            <div class="guess-header">
+                <span class="guess-header-icon">🛡️</span>
+                平台保障
+            </div>
+            <div class="guess-item" onclick="openChat('平台能为我提供哪些保障？')">
+                <span class="guess-item-number">1.</span>平台能为我提供哪些保障？
+            </div>
+            <div class="guess-item" onclick="openChat('什么叫平台保障')">
+                <span class="guess-item-number">2.</span>什么叫平台保障
+            </div>
+            <div class="guess-item" onclick="openChat('消费后出现纠纷怎么办？')">
+                <span class="guess-item-number">3.</span>消费后出现纠纷怎么办？
+            </div>
+            <div class="guess-item" onclick="openChat('平台如何保障我的权益？')">
+                <span class="guess-item-number">4.</span>平台如何保障我的权益？
+            </div>
+        </div>
+        
+        <!-- 对话界面 -->
+        <div class="chat-screen" id="chatScreen">
+            <div class="chat-header">
+                <span class="chat-back" onclick="closeChat()">←</span>
+                <span class="chat-title">抖小保 - 平台保障助手</span>
+            </div>
+            
+            <div class="chat-container" id="chatContainer">
+                <div class="message-time">刚刚</div>
+                
+                <div class="message ai">
+                    <div class="message-avatar">
+                        <img src="抖小保.png" alt="抖小保" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                    </div>
+                    <div class="message-content">
+                        您好！我是抖小保，平台的保障助手。有什么可以帮助您的吗？
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-box">
+                    <input type="text" class="input-field" id="userInput" placeholder="输入你的问题..." onkeypress="handleKeyPress(event)">
+                </div>
+                <div class="input-actions">
+                    <div class="chat-action-btn" onclick="showHotlineAlert()">
+                        <span class="chat-action-icon">📞</span>
+                        <span class="chat-action-text">平台热线</span>
+                    </div>
+                    <div class="chat-action-btn" onclick="startNewChat()">
+                        <span class="chat-action-icon">➕</span>
+                        <span class="chat-action-text">+新聊天</span>
+                    </div>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 转化记录页面 -->
+        <div class="convert-record-page" id="convertRecordPage">
+            <div class="convert-record-header">
+                <span class="convert-record-back" onclick="closeConvertRecordPage()">←</span>
+                <span class="convert-record-title">我的转化记录</span>
+            </div>
+            <div class="convert-record-content"></div>
+        </div>
+        
+        <!-- 客服页面 -->
+        <div class="customer-service-page" id="customerServicePage">
+            <div class="customer-service-header">
+                <span class="customer-service-back" onclick="closeCustomerServicePage()">←</span>
+                <span class="customer-service-title">平台客服</span>
+            </div>
+            <div class="customer-service-content"></div>
+        </div>
+
+        <!-- 热线弹窗 -->
+        <div class="hotline-modal" id="hotlineModal">
+            <div class="hotline-modal-content">
+                <div class="hotline-modal-title">即将拨打客服热线</div>
+                <div class="hotline-modal-number">950525</div>
+                <div class="hotline-modal-buttons">
+                    <button class="hotline-modal-btn cancel" onclick="closeHotlineModal()">取消</button>
+                    <button class="hotline-modal-btn confirm" onclick="confirmHotline()">确认拨打</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let reminderCount = 0;
+        const reminderMessages = [
+            '👋 嗨！有问题随时找我哦~',
+            '🛡️ 平台保障，放心消费！',
+            '❓ 有疑问？点击我咨询！',
+            '🤝 我来为您的消费保驾护航！'
+        ];
+        
+        let reminderInterval = null;
+        let hasAd = false;
+        let firstReminderShown = false;
+        
+        // 对话上下文状态
+        let conversationContext = {
+            lastQuestionType: null // 'ad_record' 或 'customer_service'
+        };
+        
+        // 切换视频播放/暂停
+        function toggleVideoPlay(event) {
+            // 检查点击的是不是抖小保或其子元素
+            if (event) {
+                const target = event.target;
+                // 如果点击的是抖小保、气泡或猜你想问面板，不暂停视频
+                const douXiaoBao = document.getElementById('douXiaoBao');
+                const reminderBubble = document.getElementById('reminderBubble');
+                const guessPanel = document.getElementById('guessPanel');
+                
+                if (douXiaoBao.contains(target) || 
+                    (reminderBubble && reminderBubble.contains(target)) || 
+                    (guessPanel && guessPanel.contains(target))) {
+                    return;
+                }
+            }
+            
+            const video = document.getElementById('adVideo');
+            const overlay = document.getElementById('videoOverlayHint');
+            
+            if (video.paused) {
+                video.play();
+                overlay.textContent = '▶️ 播放中';
+            } else {
+                video.pause();
+                overlay.textContent = '⏸️ 已暂停';
+            }
+            
+            // 显示提示并在1.5秒后隐藏
+            overlay.style.opacity = '1';
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+            }, 1500);
+        }
+        
+        // 广告时间段（秒）
+        const adTimeRanges = [
+            { start: 1, end: 4.5 },
+            { start: 7.5, end: 10.5 }
+        ];
+        
+        // 检查当前时间是否在广告时间段内
+        function isInAdTimeRange(currentTime) {
+            for (let range of adTimeRanges) {
+                if (currentTime >= range.start && currentTime <= range.end) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // 根据视频时间更新抖小保显示
+        function updateDouXiaoBaoByTime() {
+            const video = document.getElementById('adVideo');
+            if (!video) return;
+            
+            const currentTime = video.currentTime;
+            const newHasAd = isInAdTimeRange(currentTime);
+            
+            if (newHasAd !== hasAd) {
+                hasAd = newHasAd;
+                updateDouXiaoBaoVisibility();
+                
+                if (hasAd) {
+                    if (!firstReminderShown) {
+                        showReminder();
+                        startReminderLoop();
+                        firstReminderShown = true;
+                    }
+                } else {
+                    firstReminderShown = false;
+                }
+            }
+        }
+
+        // 页面加载完成后开始提醒
+        window.onload = function() {
+            // 初始隐藏抖小保
+            hasAd = false;
+            updateDouXiaoBaoVisibility();
+            
+            // 每0.5秒更新一次抖小保状态
+            setInterval(updateDouXiaoBaoByTime, 500);
+            updateDouXiaoBaoByTime();
+        };
+        
+        // 更新抖小保显示状态
+        function updateDouXiaoBaoVisibility() {
+            const douXiaoBao = document.getElementById('douXiaoBao');
+            const reminderBubble = document.getElementById('reminderBubble');
+            const guessPanel = document.getElementById('guessPanel');
+            
+            if (hasAd) {
+                douXiaoBao.classList.remove('hidden');
+                if (!firstReminderShown) {
+                    showReminder();
+                    startReminderLoop();
+                    firstReminderShown = true;
+                }
+            } else {
+                douXiaoBao.classList.add('hidden');
+                reminderBubble.classList.remove('show');
+                guessPanel.classList.remove('show');
+                stopReminderLoop();
+                // 重置首次展示状态，下次检测到广告时会再次展示
+                firstReminderShown = false;
+            }
+        }
+        
+        // 开始提醒循环
+        function startReminderLoop() {
+            if (reminderInterval) {
+                clearInterval(reminderInterval);
+            }
+            reminderInterval = setInterval(() => {
+                if (hasAd) {
+                    showReminder();
+                }
+            }, 5000);
+        }
+        
+        // 停止提醒循环
+        function stopReminderLoop() {
+            if (reminderInterval) {
+                clearInterval(reminderInterval);
+                reminderInterval = null;
+            }
+        }
+
+        // 展示提醒（抖动+气泡）
+        function showReminder() {
+            const douXiaoBao = document.getElementById('douXiaoBao');
+            const reminderBubble = document.getElementById('reminderBubble');
+            
+            // 如果抖小保被隐藏，不展示
+            if (douXiaoBao.classList.contains('hidden')) {
+                return;
+            }
+            
+            // 挥手动画
+            douXiaoBao.classList.add('wave');
+            setTimeout(() => {
+                douXiaoBao.classList.remove('wave');
+            }, 600);
+            
+            // 显示提醒气泡
+            reminderBubble.textContent = reminderMessages[reminderCount % reminderMessages.length];
+            reminderBubble.classList.add('show');
+            reminderCount++;
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                reminderBubble.classList.remove('show');
+            }, 3000);
+        }
+
+        // 切换猜你想问面板
+        function toggleGuessPanel() {
+            const panel = document.getElementById('guessPanel');
+            const reminderBubble = document.getElementById('reminderBubble');
+            panel.classList.toggle('show');
+            reminderBubble.classList.remove('show');
+        }
+
+        // 打开对话界面（纯前端版本）
+        function openChat(question) {
+            const chatScreen = document.getElementById('chatScreen');
+            const chatContainer = document.getElementById('chatContainer');
+            
+            chatScreen.classList.add('show');
+            document.getElementById('guessPanel').classList.remove('show');
+            
+            // 如果有预设问题，直接发送
+            if (question) {
+                addUserMessage(question);
+                
+                // 显示打字中
+                setTimeout(() => {
+                    showTypingIndicator();
+                }, 500);
+                
+                // 直接用前端逻辑回复
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    addAIResponse(question);
+                }, 1500);
+            }
+        }
+
+        // 关闭对话界面
+        function closeChat() {
+            const chatScreen = document.getElementById('chatScreen');
+            chatScreen.classList.remove('show');
+        }
+
+        // 处理键盘回车
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // 发送消息（纯前端版本）
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                input.value = '';
+                
+                // 显示打字中
+                showTypingIndicator();
+                
+                // 直接用前端逻辑回复
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    addAIResponse(message);
+                }, 1500);
+            }
+        }
+        
+        // 添加AI回复（直接使用内容）
+        function addAIResponseWithContent(content) {
+            const chatContainer = document.getElementById('chatContainer');
+            const aiReply = document.createElement('div');
+            aiReply.className = 'message ai';
+            aiReply.innerHTML = `
+                <div class="message-avatar">
+                    <img src="抖小保.png" alt="抖小保" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                </div>
+                <div class="message-content">
+                    ${content.replace(/\n/g, '<br>')}
+                </div>
+            `;
+            chatContainer.appendChild(aiReply);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 添加用户消息
+        function addUserMessage(message) {
+            const chatContainer = document.getElementById('chatContainer');
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user';
+            userMessage.innerHTML = `
+                <div class="message-content">${escapeHtml(message)}</div>
+                <div class="message-avatar">😊</div>
+            `;
+            chatContainer.appendChild(userMessage);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 显示打字中
+        function showTypingIndicator() {
+            const chatContainer = document.getElementById('chatContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'message ai';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <img src="抖小保.png" alt="抖小保" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                </div>
+                <div class="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 隐藏打字中
+        function hideTypingIndicator() {
+            const typingDiv = document.getElementById('typingIndicator');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+        }
+
+        // 打开转化记录页面
+        function openConvertRecordPage() {
+            const convertRecordPage = document.getElementById('convertRecordPage');
+            convertRecordPage.classList.add('show');
+        }
+
+        // 关闭转化记录页面
+        function closeConvertRecordPage() {
+            const convertRecordPage = document.getElementById('convertRecordPage');
+            convertRecordPage.classList.remove('show');
+        }
+
+        // 打开客服页面
+        function openCustomerServicePage() {
+            const customerServicePage = document.getElementById('customerServicePage');
+            customerServicePage.classList.add('show');
+        }
+
+        // 关闭客服页面
+        function closeCustomerServicePage() {
+            const customerServicePage = document.getElementById('customerServicePage');
+            customerServicePage.classList.remove('show');
+        }
+
+        // 添加AI回复（智能思考）
+        function addAIResponse(userQuestion) {
+            const chatContainer = document.getElementById('chatContainer');
+            const aiReply = document.createElement('div');
+            aiReply.className = 'message ai';
+            aiReply.innerHTML = `
+                <div class="message-avatar">
+                    <img src="抖小保.png" alt="抖小保" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                </div>
+                <div class="message-content">
+                    ${generateAIResponse(userQuestion)}
+                </div>
+            `;
+            chatContainer.appendChild(aiReply);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 预设商家推荐内容
+        const RECOMMEND_MERCHANTS = [
+            {
+                name: "东方自然美学工作室",
+                rating: 4.9,
+                service: "自然风格摄影服务",
+                description: "专注于户外自然场景摄影，口碑极佳，履约率99%",
+                tag: "履约高"
+            },
+            {
+                name: "阳光咖啡生活馆",
+                rating: 4.8,
+                service: "精品咖啡体验",
+                description: "精选世界各地咖啡豆，提供舒适的环境和优质服务",
+                tag: "口碑好"
+            },
+            {
+                name: "美好花艺设计",
+                rating: 4.9,
+                service: "花艺定制与配送",
+                description: "新鲜花材，专业设计，准时配送，好评如潮",
+                tag: "评价优"
+            }
+        ];
+
+        // 智能AI回复生成（带上下文思考）
+        function generateAIResponse(question) {
+            const q = question.toLowerCase();
+            
+            // ===== 0. 检查是否是推荐相关问题 =====
+            const isRecommend = q.includes('推荐') || q.includes('同类型') || 
+                               q.includes('其他') && (q.includes('推广') || q.includes('商家') || q.includes('服务'));
+            
+            if (isRecommend) {
+                let recommendHtml = '好的！为您推荐几家履约和评价都很好的商家：<br><br>';
+                RECOMMEND_MERCHANTS.forEach((merchant) => {
+                    recommendHtml += `<div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="font-weight: bold; font-size: 16px;">${merchant.name} <span style="color: #ff6b35;">⭐${merchant.rating}</span> <span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 12px;">${merchant.tag}</span></div>
+                        <div style="color: #666; margin-top: 4px;">${merchant.service}</div>
+                        <div style="color: #888; margin-top: 2px; font-size: 13px;">${merchant.description}</div>
+                    </div>`;
+                });
+                recommendHtml += '<br>这些商家都是平台上口碑好、履约率高的优质商家哦！';
+                conversationContext.lastQuestionType = null;
+                return recommendHtml;
+            }
+            
+            // ===== 1. 预设问题 - 先检查 =====
+            const presetReplies = {
+                '平台能为我提供哪些保障？': '您好！我们平台为您提供多重保障：<br><br>🛡️ 消费纠纷调解服务<br>🛡️ 售后问题处理<br>🛡️ 虚假广告赔付<br>🛡️ 商家资质审核<br>🛡️ 交易安全保障<br><br>有具体问题可以点击下方按钮：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">联系客服</button><button class="jump-button" onclick="openConvertRecordPage()">查看记录</button>',
+                '什么叫平台保障': '您好！平台保障是为保护您的消费权益提供的四重保障服务：<br><br>✅ 不符包退<br>消费与广告描述不符，可申请退款<br><br>✅ 不符有补偿<br>遇到消费纠纷，平台提供补偿支持<br><br>✅ 专属客服<br>专业客服一对一为您服务<br><br>✅ 未用可退<br>未使用的服务可申请退款<br><br>有问题可以点击下方按钮：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">联系客服</button><button class="jump-button" onclick="openConvertRecordPage()">查看记录</button>',
+                '消费后出现纠纷怎么办？': '您好！如果消费后出现纠纷：<br><br>1️⃣ 通过抖小保提交问题<br>2️⃣ 提供相关凭证和证据<br>3️⃣ 平台会在24小时内响应<br>4️⃣ 72小时内给出处理方案<br><br>现在就可以帮您：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交问题</button>',
+                '平台如何保障我的权益？': '您好！平台通过以下方式保障您的权益：<br><br>✅ 严格的商家入驻审核<br>✅ 交易资金安全监管<br>✅ 专业的纠纷调解团队<br>✅ 完善的赔付机制<br>✅ 定期的服务质量评估<br><br>有问题随时找我：<br><br><button class="jump-button" onclick="openChat(\'我要投诉\')">投诉建议</button>',
+                '我要投诉': '收到！我们很重视您的反馈。<br><br>请点击下方按钮进入投诉页面，详细描述您遇到的问题，我们会尽快处理：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交投诉</button>',
+                '退款流程': '您好！退款流程如下：<br><br>1️⃣ 进入"我的转化记录"<br>2️⃣ 找到对应的订单<br>3️⃣ 点击"申请退款"<br>4️⃣ 填写退款原因并提交<br><br>现在就去查看：<br><br><button class="jump-button" onclick="openConvertRecordPage()">查看订单</button>'
+            };
+            
+            // 检查是否是预设问题
+            for (let key in presetReplies) {
+                if (q.includes(key.substring(0, 5))) {
+                    conversationContext.lastQuestionType = null;
+                    return presetReplies[key];
+                }
+            }
+            
+            // ===== 1. 先检查用户是否说"找不到"、"没看到"等关键词 =====
+            const isNotFound = q.includes('找不到') || q.includes('没找到') || 
+                              q.includes('看不到') || q.includes('没看到') || 
+                              q.includes('不') && (q.includes('找') || q.includes('见'));
+            
+            if (isNotFound) {
+                // 结合上下文判断用户找不到的是什么
+                if (conversationContext.lastQuestionType === 'ad_record') {
+                    // 之前问的是广告记录，现在说找不到，引导跳转广告记录页面
+                    conversationContext.lastQuestionType = null; // 重置上下文
+                    return '别担心！我直接带您去查看广告记录页面。<br><br><button class="jump-button" onclick="openConvertRecordPage()">点击查看广告记录</button>';
+                } else if (conversationContext.lastQuestionType === 'customer_service') {
+                    // 之前问的是客服，现在说找不到，引导跳转客服页面
+                    conversationContext.lastQuestionType = null; // 重置上下文
+                    return '别担心！我直接带您去客服页面。<br><br><button class="jump-button" onclick="openCustomerServicePage()">点击联系客服</button>';
+                }
+            }
+            
+            // ===== 2. 检查用户是否问广告记录 =====
+            const isAdRecordQuestion = q.includes('广告记录') || q.includes('转化记录') || 
+                                      q.includes('订单记录') || (q.includes('哪里找') && (q.includes('广告') || q.includes('订单') || q.includes('记录'))) ||
+                                      q.includes('查看记录') || q.includes('找记录') || q.includes('留资');
+            
+            if (isAdRecordQuestion) {
+                // 记录上下文：用户问的是广告记录
+                conversationContext.lastQuestionType = 'ad_record';
+                return '您好！您可以通过以下方式找到广告记录：<br><br>📱 抖音APP → 左上角"☰" → 找到"我的转化记录"';
+            }
+            
+            // ===== 3. 检查用户是否问客服 =====
+            const isCustomerServiceQuestion = q.includes('客服') || q.includes('联系客服') || 
+                                             q.includes('找客服') || q.includes('售后');
+            
+            if (isCustomerServiceQuestion) {
+                // 记录上下文：用户问的是客服
+                conversationContext.lastQuestionType = 'customer_service';
+                return '您好！您可以通过以下方式找到客服：<br><br>📱 抖音APP → 左上角"☰" → 找到"我的转化记录" → 点进去，再找到需要联系客服的那个广告记录或订单，点击"联系客服"';
+            }
+            
+            // ===== 4. 其他常见问题 =====
+            if (q.includes('你好') || q.includes('您好') || q.includes('hi') || q.includes('hello')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！我是抖小保，平台的保障助手😊 <br><br>有什么关于平台保障、消费纠纷、权益维护的问题都可以问我哦！';
+            }
+            
+            if (q.includes('谢谢') || q.includes('感谢')) {
+                conversationContext.lastQuestionType = null;
+                return '不客气！很高兴能帮到您😊 <br><br>如果还有其他问题，随时可以问我哦！祝您消费愉快，购物无忧！';
+            }
+            
+            if (q.includes('保障') || q.includes('保护') || q.includes('安全')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！平台非常重视用户权益保障，我们提供：<br><br>• 消费纠纷调解<br>• 售后问题处理<br>• 虚假广告赔付<br>• 商家资质审核<br>• 交易安全保障<br><br>有具体问题可以随时告诉我哦！<br><br><button class="jump-button" onclick="openCustomerServicePage()">咨询客服</button>';
+            }
+            
+            if (q.includes('纠纷') || q.includes('投诉')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！如果遇到消费纠纷，您可以通过抖小保提交问题，我们会有专业客服介入处理，协调商家解决问题，必要时提供赔付服务。<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交投诉</button>';
+            }
+            
+            if (q.includes('退款') || q.includes('退货') || q.includes('赔付')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！关于退款和赔付，平台有完善的机制：<br><br>1. 符合条件的可以申请退款<br>2. 商家责任的平台会协助赔付<br>3. 虚假广告可申请三倍赔付<br><br>点击查看您的订单：<br><br><button class="jump-button" onclick="openConvertRecordPage()">查看订单</button>';
+            }
+            
+            if (q.includes('商家') || q.includes('店铺') || q.includes('广告')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！平台对商家有严格的审核机制：<br><br>• 入驻资质审核<br>• 定期服务质量评估<br>• 广告内容真实性核查<br>• 用户反馈监督<br>• 违规商家处罚机制<br><br>发现问题？<br><br><button class="jump-button" onclick="openCustomerServicePage()">反馈问题</button>';
+            }
+            
+            // ===== 5. 默认回复 =====
+            conversationContext.lastQuestionType = null;
+            return '您好！感谢您的咨询。我是抖小保，专注于平台保障相关问题。<br><br>关于消费保障、纠纷处理、权益维护等方面的问题，我都可以为您解答。<br><br>您想了解什么呢？<br><br><button class="jump-button" onclick="openChat(\'平台能为我提供哪些保障？\')" style="margin-right: 10px;">了解保障</button><button class="jump-button" onclick="openCustomerServicePage()">联系客服</button>';
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 显示平台热线弹窗
+        function showHotlineAlert() {
+            document.getElementById('hotlineModal').classList.add('show');
+        }
+
+        // 关闭热线弹窗
+        function closeHotlineModal() {
+            document.getElementById('hotlineModal').classList.remove('show');
+        }
+
+        // 确认拨打热线
+        function confirmHotline() {
+            alert('正在拨打 950525...');
+            closeHotlineModal();
+        }
+        
+        // 开始新聊天
+        function startNewChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // 清空聊天记录，保留初始消息
+            chatContainer.innerHTML = `
+                <div class="message-time">刚刚</div>
+                <div class="message ai">
+                    <div class="message-avatar">
+                        <img src="抖小保.png" alt="抖小保" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                    </div>
+                    <div class="message-content">
+                        您好！我是抖小保，平台的保障助手。有什么可以帮助您的吗？
+                    </div>
+                </div>
+            `;
+            
+            // 重置上下文
+            conversationContext.lastQuestionType = null;
+        }
+        
+        // 点击其他地方关闭面板
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('guessPanel');
+            const douXiaoBao = document.getElementById('douXiaoBao');
+            const reminderBubble = document.getElementById('reminderBubble');
+            
+            if (!panel.contains(e.target) && !douXiaoBao.contains(e.target)) {
+                panel.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
