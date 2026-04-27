@@ -833,8 +833,8 @@
             <div class="guess-item" onclick="openChat('消费后出现纠纷怎么办？')">
                 <span class="guess-item-number">3.</span>消费后出现纠纷怎么办？
             </div>
-            <div class="guess-item" onclick="openChat('平台如何保障我的权益？')">
-                <span class="guess-item-number">4.</span>平台如何保障我的权益？
+            <div class="guess-item" onclick="openChat('其他同类型内容推荐')">
+                <span class="guess-item-number">4.</span>其他同类型内容推荐
             </div>
         </div>
         
@@ -893,12 +893,26 @@
             </div>
             <div class="customer-service-content"></div>
         </div>
+        
+        <!-- 视频页面 -->
+        <div class="customer-service-page" id="videoPage">
+            <div class="customer-service-header">
+                <span class="customer-service-back" onclick="closeVideoPage()">←</span>
+                <span class="customer-service-title">推荐内容</span>
+            </div>
+            <div class="customer-service-content" style="height: 100%; display: flex; justify-content: center; align-items: center;">
+                <video id="videoPageVideo" class="ad-video" autoplay controls style="width: 100%; height: 100%; object-fit: cover;">
+                    <source src="" type="video/mp4">
+                    您的浏览器不支持视频播放。
+                </video>
+            </div>
+        </div>
 
         <!-- 热线弹窗 -->
         <div class="hotline-modal" id="hotlineModal">
             <div class="hotline-modal-content">
                 <div class="hotline-modal-title">即将拨打客服热线</div>
-                <div class="hotline-modal-number">950525</div>
+                <div class="hotline-modal-number">950522</div>
                 <div class="hotline-modal-buttons">
                     <button class="hotline-modal-btn cancel" onclick="closeHotlineModal()">取消</button>
                     <button class="hotline-modal-btn confirm" onclick="confirmHotline()">确认拨打</button>
@@ -1163,7 +1177,7 @@
                 
                 try {
                     // 所有问题都调用后端API，让后端智能处理
-                    const response = await fetch('/api/chat', {
+                    const response = await fetch('http://localhost:3001/api/chat', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1270,6 +1284,29 @@
             const customerServicePage = document.getElementById('customerServicePage');
             customerServicePage.classList.remove('show');
         }
+        
+        // 打开视频页面
+        function openVideoPage(videoType) {
+            const videoPage = document.getElementById('videoPage');
+            const videoElement = document.getElementById('videoPageVideo');
+            
+            if (videoType === '杭州连天美') {
+                videoElement.src = '杭州连天美.mp4';
+            } else if (videoType === '新氧青春诊所官方号') {
+                videoElement.src = '新氧青春诊所官方号.mp4';
+            }
+            
+            videoPage.classList.add('show');
+        }
+        
+        // 关闭视频页面
+        function closeVideoPage() {
+            const videoPage = document.getElementById('videoPage');
+            const videoElement = document.getElementById('videoPageVideo');
+            videoElement.pause();
+            videoElement.src = '';
+            videoPage.classList.remove('show');
+        }
 
         // 添加AI回复（智能思考）
         function addAIResponse(userQuestion) {
@@ -1297,7 +1334,7 @@
                 '平台能为我提供哪些保障？': '您好！我们平台为您提供多重保障：<br><br>🛡️ 消费纠纷调解服务<br>🛡️ 售后问题处理<br>🛡️ 虚假广告赔付<br>🛡️ 商家资质审核<br>🛡️ 交易安全保障<br><br>有具体问题可以点击下方按钮：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">联系客服</button><button class="jump-button" onclick="openConvertRecordPage()">查看记录</button>',
                 '什么叫平台保障': '您好！平台保障是为保护您的消费权益提供的四重保障服务：<br><br>✅ 不符包退<br>消费与广告描述不符，可申请退款<br><br>✅ 不符有补偿<br>遇到消费纠纷，平台提供补偿支持<br><br>✅ 专属客服<br>专业客服一对一为您服务<br><br>✅ 未用可退<br>未使用的服务可申请退款<br><br>有问题可以点击下方按钮：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">联系客服</button><button class="jump-button" onclick="openConvertRecordPage()">查看记录</button>',
                 '消费后出现纠纷怎么办？': '您好！如果消费后出现纠纷：<br><br>1️⃣ 通过抖小保提交问题<br>2️⃣ 提供相关凭证和证据<br>3️⃣ 平台会在24小时内响应<br>4️⃣ 72小时内给出处理方案<br><br>现在就可以帮您：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交问题</button>',
-                '平台如何保障我的权益？': '您好！平台通过以下方式保障您的权益：<br><br>✅ 严格的商家入驻审核<br>✅ 交易资金安全监管<br>✅ 专业的纠纷调解团队<br>✅ 完善的赔付机制<br>✅ 定期的服务质量评估<br><br>有问题随时找我：<br><br><button class="jump-button" onclick="openChat(\'我要投诉\')">投诉建议</button>',
+                '其他同类型内容推荐': '您好！为您推荐以下同类型优质内容：<br><br><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'杭州连天美\')"><div style="font-weight: bold; font-size: 16px;">杭州连天美</div><div style="color: #666; margin-top: 4px;">专业医疗美容机构</div><div style="color: #888; margin-top: 2px; font-size: 13px;">品质服务，口碑推荐</div></div><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'新氧青春诊所官方号\')"><div style="font-weight: bold; font-size: 16px;">新氧青春诊所官方号</div><div style="color: #666; margin-top: 4px;">专业医美服务</div><div style="color: #888; margin-top: 2px; font-size: 13px;">年轻态美学，专业呵护</div></div>',
                 '我要投诉': '收到！我们很重视您的反馈。<br><br>请点击下方按钮进入投诉页面，详细描述您遇到的问题，我们会尽快处理：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交投诉</button>',
                 '退款流程': '您好！退款流程如下：<br><br>1️⃣ 进入"我的转化记录"<br>2️⃣ 找到对应的订单<br>3️⃣ 点击"申请退款"<br>4️⃣ 填写退款原因并提交<br><br>现在就去查看：<br><br><button class="jump-button" onclick="openConvertRecordPage()">查看订单</button>'
             };
@@ -1308,6 +1345,13 @@
                     conversationContext.lastQuestionType = null;
                     return presetReplies[key];
                 }
+            }
+            
+            // ===== 0.5 检查用户是否抱怨广告太多 =====
+            const isAdComplaint = q.includes('广告') && (q.includes('多') || q.includes('烦') || q.includes('少') || q.includes('推荐'));
+            if (isAdComplaint) {
+                conversationContext.lastQuestionType = null;
+                return '非常理解您的感受！关于广告推送，您可以长按这条广告，选择「不感兴趣」，系统会减少给您推送同类广告哦。';
             }
             
             // ===== 1. 先检查用户是否说"找不到"、"没看到"等关键词 =====
