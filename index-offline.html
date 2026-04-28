@@ -164,8 +164,8 @@
             position: absolute;
             left: 20px;
             top: 180px;
-            width: 70px;
-            height: 70px;
+            width: 52px;
+            height: 52px;
             background: white;
             border-radius: 50%;
             display: flex;
@@ -198,22 +198,22 @@
         }
 
         .dou-xiao-bao-img {
-            width: 55px;
-            height: 55px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
         }
 
         .dou-xiao-bao-label {
             position: absolute;
-            bottom: -28px;
+            bottom: -22px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.8);
             color: white;
-            font-size: 13px;
-            padding: 4px 12px;
-            border-radius: 12px;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 10px;
             white-space: nowrap;
             font-weight: 500;
         }
@@ -221,18 +221,18 @@
         /* 提醒气泡 */
         .reminder-bubble {
             position: absolute;
-            left: 100px;
-            top: 175px;
+            left: 78px;
+            top: 180px;
             background: white;
-            padding: 12px 18px;
-            border-radius: 18px;
+            padding: 8px 12px;
+            border-radius: 14px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            font-size: 14px;
+            font-size: 12px;
             color: #333;
             z-index: 99;
             display: none;
             animation: bubbleIn 0.4s ease;
-            max-width: 180px;
+            max-width: 150px;
         }
 
         .reminder-bubble.show {
@@ -815,7 +815,7 @@
         
         <!-- 提醒气泡 -->
         <div class="reminder-bubble" id="reminderBubble">
-            🛡️ 平台认证·专项保障
+            🛡️ 平台认证·专享保障
         </div>
         
         <!-- 猜你想问面板 -->
@@ -827,17 +827,14 @@
             <div class="guess-item" onclick="openChat('平台能为我提供哪些保障？')">
                 <span class="guess-item-number">1.</span>平台能为我提供哪些保障？
             </div>
-            <div class="guess-item" onclick="openChat('什么叫平台保障')">
-                <span class="guess-item-number">2.</span>什么叫平台保障
-            </div>
             <div class="guess-item" onclick="openChat('消费后出现纠纷怎么办？')">
-                <span class="guess-item-number">3.</span>消费后出现纠纷怎么办？
+                <span class="guess-item-number">2.</span>消费后出现纠纷怎么办？
             </div>
             <div class="guess-item" onclick="openChat('其他同类型内容推荐')">
-                <span class="guess-item-number">4.</span>其他同类型内容推荐
+                <span class="guess-item-number">3.</span>其他同类型内容推荐
             </div>
             <div class="guess-item" onclick="openChat('该广告为什么是平台优选？')">
-                <span class="guess-item-number">5.</span>该广告为什么是平台优选？
+                <span class="guess-item-number">4.</span>该广告为什么是平台优选？
             </div>
         </div>
         
@@ -927,7 +924,7 @@
     <script>
         let reminderCount = 0;
         const reminderMessages = [
-            '🛡️ 平台认证·专项保障',
+            '🛡️ 平台认证·专享保障',
             '✨ 平台优选商家，服务有保障'
         ];
         
@@ -1320,7 +1317,7 @@
                 '平台能为我提供哪些保障？': '您好！我们平台为您提供多重保障：<br><br>🛡️ 消费纠纷调解服务<br>🛡️ 售后问题处理<br>🛡️ 虚假广告赔付<br>🛡️ 商家资质审核<br>🛡️ 交易安全保障<br><br>有具体问题可以点击下方按钮：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">联系客服</button><button class="jump-button" onclick="openConvertRecordPage()">查看记录</button>',
                 '什么叫平台保障': '您好！平台保障是为保护您的消费权益提供的四重保障服务：<br><br>✅ 不符包退<br>消费与广告描述不符，可申请退款<br><br>✅ 不符有补偿<br>遇到消费纠纷，平台提供补偿支持<br><br>✅ 专属客服<br>专业客服一对一为您服务<br><br>✅ 未用可退<br>未使用的服务可申请退款<br><br>有问题可以点击下方按钮：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">联系客服</button><button class="jump-button" onclick="openConvertRecordPage()">查看记录</button>',
                 '消费后出现纠纷怎么办？': '您好！如果消费后出现纠纷：<br><br>1️⃣ 通过抖小保提交问题<br>2️⃣ 提供相关凭证和证据<br>3️⃣ 平台会在24小时内响应<br>4️⃣ 72小时内给出处理方案<br><br>现在就可以帮您：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交问题</button>',
-                '其他同类型内容推荐': '您好！为您推荐以下同类型优质内容：<br><br><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'杭州连天美\')"><div style="font-weight: bold; font-size: 16px;">杭州连天美</div><div style="color: #666; margin-top: 4px;">专业医疗美容机构</div><div style="color: #888; margin-top: 2px; font-size: 13px;">品质服务，口碑推荐</div></div><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'新氧青春诊所官方号\')"><div style="font-weight: bold; font-size: 16px;">新氧青春诊所官方号</div><div style="color: #666; margin-top: 4px;">专业医美服务</div><div style="color: #888; margin-top: 2px; font-size: 13px;">年轻态美学，专业呵护</div></div>',
+                '其他同类型内容推荐': '您好！为您推荐以下同类型优质内容：<br><br><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'杭州连天美\')"><div style="font-weight: bold; font-size: 16px;">杭州连天美 <span style="color: #ff6b35; font-size: 14px;">⭐履约分 95</span></div><div style="color: #666; margin-top: 4px;">专业医疗美容机构</div><div style="margin-top: 4px;"><span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 12px;">退款爽快</span> <span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 12px;">无隐形消费</span></div></div><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'新氧青春诊所官方号\')"><div style="font-weight: bold; font-size: 16px;">新氧青春诊所官方号 <span style="color: #ff6b35; font-size: 14px;">⭐履约分 91</span></div><div style="color: #666; margin-top: 4px;">专业医美服务</div><div style="margin-top: 4px;"><span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 12px;">服务态度好</span> <span style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 4px; font-size: 12px;">环境整洁</span></div></div>',
                 '该广告为什么是平台优选？': '您好！这条广告之所以被标记为平台优选，是因为该商家通过了我们的严格筛选：<br><br>📊 <b>平台履约分：92分</b><br>该商家在平台的历史履约表现优秀，综合评分高于行业平均水平<br><br>💬 <b>真实用户评价：</b><br><span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 13px;">退款爽快</span> <span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 13px;">无隐形消费</span> <span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 13px;">服务态度好</span> <span style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 4px; font-size: 13px;">环境整洁</span><br><br>平台优选商家均经过资质审核与履约考核，您可以放心了解！',
                 '我要投诉': '收到！我们很重视您的反馈。<br><br>请点击下方按钮进入投诉页面，详细描述您遇到的问题，我们会尽快处理：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交投诉</button>',
                 '退款流程': '您好！退款流程如下：<br><br>1️⃣ 进入"我的转化记录"<br>2️⃣ 找到对应的订单<br>3️⃣ 点击"申请退款"<br>4️⃣ 填写退款原因并提交<br><br>现在就去查看：<br><br><button class="jump-button" onclick="openConvertRecordPage()">查看订单</button>'
@@ -1339,7 +1336,7 @@
                                q.includes('其他') && (q.includes('推广') || q.includes('商家') || q.includes('服务'));
             
             if (isRecommend) {
-                let recommendHtml = '好的！为您推荐以下同类型优质内容：<br><br><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'杭州连天美\')"><div style="font-weight: bold; font-size: 16px;">杭州连天美</div><div style="color: #666; margin-top: 4px;">专业医疗美容机构</div><div style="color: #888; margin-top: 2px; font-size: 13px;">品质服务，口碑推荐</div></div><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'新氧青春诊所官方号\')"><div style="font-weight: bold; font-size: 16px;">新氧青春诊所官方号</div><div style="color: #666; margin-top: 4px;">专业医美服务</div><div style="color: #888; margin-top: 2px; font-size: 13px;">年轻态美学，专业呵护</div></div>';
+                let recommendHtml = '好的！为您推荐以下同类型优质内容：<br><br><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'杭州连天美\')"><div style="font-weight: bold; font-size: 16px;">杭州连天美 <span style="color: #ff6b35; font-size: 14px;">⭐履约分 95</span></div><div style="color: #666; margin-top: 4px;">专业医疗美容机构</div><div style="margin-top: 4px;"><span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 12px;">退款爽快</span> <span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 12px;">无隐形消费</span></div></div><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'新氧青春诊所官方号\')"><div style="font-weight: bold; font-size: 16px;">新氧青春诊所官方号 <span style="color: #ff6b35; font-size: 14px;">⭐履约分 91</span></div><div style="color: #666; margin-top: 4px;">专业医美服务</div><div style="margin-top: 4px;"><span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 12px;">服务态度好</span> <span style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 4px; font-size: 12px;">环境整洁</span></div></div>';
                 conversationContext.lastQuestionType = null;
                 return recommendHtml;
             }
