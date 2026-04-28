@@ -815,7 +815,7 @@
         
         <!-- 提醒气泡 -->
         <div class="reminder-bubble" id="reminderBubble">
-            👋 嗨！有问题随时找我哦~
+            🛡️ 平台认证·专项保障
         </div>
         
         <!-- 猜你想问面板 -->
@@ -835,6 +835,9 @@
             </div>
             <div class="guess-item" onclick="openChat('其他同类型内容推荐')">
                 <span class="guess-item-number">4.</span>其他同类型内容推荐
+            </div>
+            <div class="guess-item" onclick="openChat('该广告为什么是平台优选？')">
+                <span class="guess-item-number">5.</span>该广告为什么是平台优选？
             </div>
         </div>
         
@@ -924,10 +927,8 @@
     <script>
         let reminderCount = 0;
         const reminderMessages = [
-            '👋 嗨！有问题随时找我哦~',
-            '🛡️ 平台保障，放心消费！',
-            '❓ 有疑问？点击我咨询！',
-            '🤝 我来为您的消费保驾护航！'
+            '🛡️ 平台认证·专项保障',
+            '✨ 平台优选商家，服务有保障'
         ];
         
         let reminderInterval = null;
@@ -1320,6 +1321,7 @@
                 '什么叫平台保障': '您好！平台保障是为保护您的消费权益提供的四重保障服务：<br><br>✅ 不符包退<br>消费与广告描述不符，可申请退款<br><br>✅ 不符有补偿<br>遇到消费纠纷，平台提供补偿支持<br><br>✅ 专属客服<br>专业客服一对一为您服务<br><br>✅ 未用可退<br>未使用的服务可申请退款<br><br>有问题可以点击下方按钮：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">联系客服</button><button class="jump-button" onclick="openConvertRecordPage()">查看记录</button>',
                 '消费后出现纠纷怎么办？': '您好！如果消费后出现纠纷：<br><br>1️⃣ 通过抖小保提交问题<br>2️⃣ 提供相关凭证和证据<br>3️⃣ 平台会在24小时内响应<br>4️⃣ 72小时内给出处理方案<br><br>现在就可以帮您：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交问题</button>',
                 '其他同类型内容推荐': '您好！为您推荐以下同类型优质内容：<br><br><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'杭州连天美\')"><div style="font-weight: bold; font-size: 16px;">杭州连天美</div><div style="color: #666; margin-top: 4px;">专业医疗美容机构</div><div style="color: #888; margin-top: 2px; font-size: 13px;">品质服务，口碑推荐</div></div><div style="padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openVideoPage(\'新氧青春诊所官方号\')"><div style="font-weight: bold; font-size: 16px;">新氧青春诊所官方号</div><div style="color: #666; margin-top: 4px;">专业医美服务</div><div style="color: #888; margin-top: 2px; font-size: 13px;">年轻态美学，专业呵护</div></div>',
+                '该广告为什么是平台优选？': '您好！这条广告之所以被标记为平台优选，是因为该商家通过了我们的严格筛选：<br><br>📊 <b>平台履约分：92分</b><br>该商家在平台的历史履约表现优秀，综合评分高于行业平均水平<br><br>💬 <b>真实用户评价：</b><br><span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 13px;">退款爽快</span> <span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 13px;">无隐形消费</span> <span style="background: #e8f5e9; color: #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 13px;">服务态度好</span> <span style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 4px; font-size: 13px;">环境整洁</span><br><br>平台优选商家均经过资质审核与履约考核，您可以放心了解！',
                 '我要投诉': '收到！我们很重视您的反馈。<br><br>请点击下方按钮进入投诉页面，详细描述您遇到的问题，我们会尽快处理：<br><br><button class="jump-button" onclick="openCustomerServicePage()">提交投诉</button>',
                 '退款流程': '您好！退款流程如下：<br><br>1️⃣ 进入"我的转化记录"<br>2️⃣ 找到对应的订单<br>3️⃣ 点击"申请退款"<br>4️⃣ 填写退款原因并提交<br><br>现在就去查看：<br><br><button class="jump-button" onclick="openConvertRecordPage()">查看订单</button>'
             };
@@ -1417,6 +1419,27 @@
             if (q.includes('商家') || q.includes('店铺') || q.includes('广告')) {
                 conversationContext.lastQuestionType = null;
                 return '您好！平台对商家有严格的审核机制：<br><br>• 入驻资质审核<br>• 定期服务质量评估<br>• 广告内容真实性核查<br>• 用户反馈监督<br>• 违规商家处罚机制<br><br>发现问题？<br><br><button class="jump-button" onclick="openCustomerServicePage()">反馈问题</button>';
+            }
+            
+            // ===== 4.5 医美行业避坑指南 =====
+            if (q.includes('避坑') || q.includes('坑') || q.includes('注意') || q.includes('陷阱') || q.includes('防坑')) {
+                conversationContext.lastQuestionType = null;
+                return '⚠️ <b>医美消费避坑指南：</b><br><br>1️⃣ <b>查资质</b>：确认机构是否有《医疗机构执业许可证》，医生是否有执业资格证<br><br>2️⃣ <b>警惕低价</b>：远低于市场价的项目可能有隐形消费或使用劣质材料<br><br>3️⃣ <b>看药械</b>：注射类项目要求当面拆封，扫码验真，拒绝来路不明产品<br><br>4️⃣ <b>留凭证</b>：保留广告截图、聊天记录、付款凭证，维权时是关键证据<br><br>5️⃣ <b>不冲动</b>：不要被"限时优惠""仅此一天"等话术催促，冷静思考再决定<br><br>6️⃣ <b>分清项目</b>：生活美容≠医疗美容，破皮注射类必须由正规医疗机构操作<br><br>💡 记住：平台优选商家都经过资质审核，选择平台推荐更安心！';
+            }
+            
+            if (q.includes('医美') || q.includes('整形') || q.includes('美容') || q.includes('注射') || q.includes('玻尿酸') || q.includes('双眼皮') || q.includes('隆鼻')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！关于医美消费，给您几点重要建议：<br><br>🏥 <b>选择正规机构</b><br>确认有《医疗机构执业许可证》，选择平台优选商家更安心<br><br>👩‍⚕️ <b>确认医生资质</b><br>主诊医生须持有《医师执业证书》和医疗美容主诊资格<br><br>💊 <b>验真药械</b><br>注射产品当面拆封扫码验真，拒绝"水货"和来路不明产品<br><br>📝 <b>签知情同意书</b><br>术前必须签署，仔细阅读风险告知条款<br><br>💰 <b>警惕隐形消费</b><br>问清总价是否包含复诊、修复等费用，拒绝术中加价<br><br>有具体问题可以问我，或者：<br><br><button class="jump-button" onclick="openCustomerServicePage()" style="margin-right: 10px;">咨询客服</button><button class="jump-button" onclick="openChat(\'该广告为什么是平台优选？\')">查看商家资质</button>';
+            }
+            
+            if (q.includes('价格') || q.includes('多少钱') || q.includes('贵') || q.includes('便宜') || q.includes('费用') || q.includes('收费')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！关于医美项目价格，给您几点参考：<br><br>💰 <b>常见项目参考价格区间：</b><br>• 玻尿酸注射：2000-8000元/支<br>• 双眼皮手术：3000-15000元<br>• 隆鼻手术：5000-30000元<br>• 光子嫩肤：500-3000元/次<br><br>⚠️ <b>价格避坑提醒：</b><br>• 远低于市场价 → 可能有隐形消费或使用劣质材料<br>• 术中加价 → 违规行为，可向平台投诉<br>• 问清总价 → 是否包含复诊、麻醉、修复等费用<br><br>建议选择平台优选商家，价格透明更有保障！<br><br><button class="jump-button" onclick="openChat(\'其他同类型内容推荐\')">查看推荐商家</button>';
+            }
+            
+            if (q.includes('效果') || q.includes('副作用') || q.includes('风险') || q.includes('安全') || q.includes('后遗症')) {
+                conversationContext.lastQuestionType = null;
+                return '您好！关于医美项目的安全性，您需要了解：<br><br>⚠️ <b>常见风险：</b><br>• 注射类：红肿、淤青、过敏反应<br>• 手术类：感染、疤痕、效果不满意<br>• 光电类：色素沉着、灼伤<br><br>✅ <b>降低风险的方法：</b><br>1. 选择正规有资质的医疗机构<br>2. 使用正规药械，当面验真<br>3. 如实告知医生过敏史和病史<br>4. 严格遵医嘱做好术后护理<br>5. 保留广告承诺和消费凭证<br><br>🛡️ 平台优选商家经过资质审核，且享受平台保障：<br>• 不符包退<br>• 不符有补偿<br>• 专属客服跟进<br><br><button class="jump-button" onclick="openChat(\'什么叫平台保障\')">了解平台保障</button>';
             }
             
             // ===== 5. 默认回复 =====
